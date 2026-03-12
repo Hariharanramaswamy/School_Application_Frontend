@@ -2,8 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { formatCountdown } from "@/lib/utils";
+// Application deadline: always March 31 of the current or next academic cycle
+function getApplicationDeadline(): number {
+    const now = new Date();
+    let year = now.getFullYear();
+    const deadline = new Date(year, 2, 31, 23, 59, 59); // March 31
+    // If the deadline has passed, use next year's
+    if (now > deadline) {
+        year += 1;
+    }
+    return new Date(year, 2, 31, 23, 59, 59).getTime();
+}
 
-const TARGET = new Date("2026-03-31T23:59:59").getTime();
+const TARGET = getApplicationDeadline();
 
 const labels = ["Days", "Hours", "Minutes", "Seconds"] as const;
 

@@ -15,15 +15,14 @@ const quickLinks = [
 const admissionLinks = [
     { label: "Apply Now", href: "/register" },
     { label: "Login", href: "/login" },
-    { label: "Fee Structure", href: "#" },
-    { label: "Prospectus", href: "#" },
 ];
 
-const socialLinks = [
-    { icon: Facebook, label: "Facebook", href: "#" },
-    { icon: Twitter, label: "Twitter", href: "#" },
-    { icon: Instagram, label: "Instagram", href: "#" },
-    { icon: Youtube, label: "YouTube", href: "#" },
+const socialLinks: { icon: typeof Facebook; label: string; href: string }[] = [
+    // Add real social media URLs here when available
+    // { icon: Facebook, label: "Facebook", href: "https://facebook.com/amjs" },
+    // { icon: Twitter, label: "Twitter", href: "https://twitter.com/amjs" },
+    // { icon: Instagram, label: "Instagram", href: "https://instagram.com/amjs" },
+    // { icon: Youtube, label: "YouTube", href: "https://youtube.com/amjs" },
 ];
 
 export default function Footer() {

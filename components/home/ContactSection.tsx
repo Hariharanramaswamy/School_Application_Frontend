@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { MapPin, Phone, Mail, Send } from "lucide-react";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { contactApi } from "@/lib/api";
 import type { ContactFormData } from "@/types";
 
 const infoCards = [
@@ -26,6 +27,7 @@ const infoCards = [
 export default function ContactSection() {
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const {
         register,
         handleSubmit,
@@ -33,15 +35,20 @@ export default function ContactSection() {
         formState: { errors },
     } = useForm<ContactFormData>();
 
-    const onSubmit = (data: ContactFormData) => {
+    const onSubmit = async (data: ContactFormData) => {
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
+        setError(null);
+        try {
+            await contactApi.sendMessage(data);
             setSubmitted(true);
             reset();
             setTimeout(() => setSubmitted(false), 4000);
-        }, 1200);
-        void data; // used for simulation
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to send message. Please try again.";
+            setError(msg);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -150,6 +157,12 @@ export default function ContactSection() {
                                     </p>
                                 )}
                             </div>
+
+                            {error && (
+                                <div className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-medium">
+                                    {error}
+                                </div>
+                            )}
 
                             {submitted && (
                                 <div className="mb-4 p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 text-sm font-medium">

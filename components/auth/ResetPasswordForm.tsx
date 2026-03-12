@@ -6,7 +6,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import type { ResetPasswordPayload } from "@/types";
+import { authApi } from "@/lib/api";
+
+interface ResetFormData {
+    email: string;
+    password: string;
+    confirmPassword: string;
+}
 
 export default function ResetPasswordForm() {
     const router = useRouter();
@@ -18,18 +24,23 @@ export default function ResetPasswordForm() {
         handleSubmit,
         watch,
         formState: { errors },
-    } = useForm<ResetPasswordPayload>();
+    } = useForm<ResetFormData>();
 
     const password = watch("password");
 
-    const onSubmit = (_data: ResetPasswordPayload) => {
+    const onSubmit = async (data: ResetFormData) => {
         setLoading(true);
         setMessage(null);
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            await authApi.resetPassword({ email: data.email, password: data.password });
             setMessage({ type: "success", text: "Password reset successfully! Redirecting to login..." });
             setTimeout(() => router.push("/login"), 2000);
-        }, 600);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Password reset failed. Please try again.";
+            setMessage({ type: "error", text: msg });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -46,6 +57,21 @@ export default function ResetPasswordForm() {
             )}
 
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                <Input
+                    label="Email Address"
+                    id="reset-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    autoComplete="email"
+                    error={errors.email?.message}
+                    register={register("email", {
+                        required: "Email is required",
+                        pattern: {
+                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                            message: "Enter a valid email address",
+                        },
+                    })}
+                />
                 <Input
                     label="New Password"
                     id="reset-password"
@@ -84,3 +110,4 @@ export default function ResetPasswordForm() {
         </>
     );
 }
+

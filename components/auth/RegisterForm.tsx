@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Shield } from "lucide-react";
+
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { authApi } from "@/lib/api";
@@ -93,44 +93,7 @@ export default function RegisterForm() {
                     })}
                 />
 
-                {/* Robot Checkbox */}
-                <div className="mb-5">
-                    <div
-                        className={`flex items-center justify-between bg-surface-light dark:bg-navy-800 border-[1.5px] rounded-xl px-4 py-3.5 transition-all ${errors.robot
-                            ? "border-red-500"
-                            : "border-gray-200 dark:border-navy-700 hover:border-blue-400"
-                            }`}
-                    >
-                        <label className="flex items-center gap-3 cursor-pointer select-none">
-                            <div className="relative flex-shrink-0 w-6 h-6">
-                                <input
-                                    type="checkbox"
-                                    className="sr-only peer"
-                                    {...register("robot", { required: "Please verify that you are not a robot" })}
-                                />
-                                <span className="absolute inset-0 rounded-md border-[1.5px] border-gray-300 dark:border-gray-600 transition-all peer-checked:bg-blue-500 peer-checked:border-blue-500 peer-checked:shadow-md peer-checked:shadow-blue-500/30 bg-white dark:bg-navy-800" />
-                                <svg
-                                    className="absolute inset-0 m-auto h-3.5 w-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="3"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <polyline points="20 6 9 17 4 12" />
-                                </svg>
-                            </div>
-                            <span className="text-sm font-medium text-navy-900 dark:text-gray-200">
-                                I&apos;m not a robot
-                            </span>
-                        </label>
-                        <Shield className="h-5 w-5 text-gray-300 dark:text-gray-600" />
-                    </div>
-                    {errors.robot && (
-                        <p className="mt-1.5 text-xs font-medium text-red-500">{errors.robot.message}</p>
-                    )}
-                </div>
+
 
                 <Button type="submit" loading={loading} fullWidth>
                     Register Account
