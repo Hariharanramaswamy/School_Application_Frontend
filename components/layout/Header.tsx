@@ -3,10 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import Button from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 const navLinks = [
     { label: "Home", href: "#home" },
@@ -20,6 +22,8 @@ export default function Header() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [activeSection, setActiveSection] = useState("home");
+    const { isLoggedIn, userEmail, loading: authLoading, logout } = useAuth();
+    const router = useRouter();
 
     useEffect(() => {
         const onScroll = () => {
@@ -67,6 +71,13 @@ export default function Header() {
         },
         [closeNav]
     );
+
+    const handleLogout = useCallback(() => {
+        logout();
+        closeNav();
+        router.push("/");
+        router.refresh();
+    }, [logout, closeNav, router]);
 
     return (
         <>
@@ -126,14 +137,38 @@ export default function Header() {
                     </nav>
 
                     {/* Desktop Auth Buttons */}
-                    <div className="hidden lg:flex items-center gap-2 ml-4">
-                        <Link href="/login">
-                            <Button variant="secondary" size="sm">Login</Button>
-                        </Link>
-                        <Link href="/register">
-                            <Button variant="primary" size="sm">Register</Button>
-                        </Link>
-                    </div>
+                    {!authLoading && (
+                        <div className="hidden lg:flex items-center gap-2 ml-4">
+                            {isLoggedIn ? (
+                                <>
+                                    <Link href="/admission">
+                                        <Button variant="primary" size="sm" className="gap-1.5">
+                                            <LayoutDashboard className="h-3.5 w-3.5" />
+                                            Apply Now
+                                        </Button>
+                                    </Link>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={handleLogout}
+                                        className="gap-1.5 !text-red-400 hover:!text-red-300 hover:!bg-red-500/10"
+                                    >
+                                        <LogOut className="h-3.5 w-3.5" />
+                                        Logout
+                                    </Button>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href="/login">
+                                        <Button variant="secondary" size="sm">Login</Button>
+                                    </Link>
+                                    <Link href="/register">
+                                        <Button variant="primary" size="sm">Register</Button>
+                                    </Link>
+                                </>
+                            )}
+                        </div>
+                    )}
 
                     {/* Theme Toggle */}
                     <div className="ml-auto lg:ml-2">
@@ -189,12 +224,39 @@ export default function Header() {
                         </li>
                     ))}
                     <li className="pt-3 border-t border-gray-100 dark:border-navy-800 mt-2">
-                        <Link href="/login" onClick={closeNav}>
-                            <Button variant="secondary" fullWidth className="mb-2">Login</Button>
-                        </Link>
-                        <Link href="/register" onClick={closeNav}>
-                            <Button variant="primary" fullWidth>Register</Button>
-                        </Link>
+                        {!authLoading && isLoggedIn ? (
+                            <>
+                                {userEmail && (
+                                    <p className="text-xs text-gray-400 px-4 mb-3 truncate">
+                                        {userEmail}
+                                    </p>
+                                )}
+                                <Link href="/admission" onClick={closeNav}>
+                                    <Button variant="primary" fullWidth className="mb-2 gap-1.5">
+                                        <LayoutDashboard className="h-4 w-4" />
+                                        Apply Now
+                                    </Button>
+                                </Link>
+                                <Button
+                                    variant="ghost"
+                                    fullWidth
+                                    onClick={handleLogout}
+                                    className="gap-1.5 !text-red-400 hover:!text-red-300"
+                                >
+                                    <LogOut className="h-4 w-4" />
+                                    Logout
+                                </Button>
+                            </>
+                        ) : !authLoading ? (
+                            <>
+                                <Link href="/login" onClick={closeNav}>
+                                    <Button variant="secondary" fullWidth className="mb-2">Login</Button>
+                                </Link>
+                                <Link href="/register" onClick={closeNav}>
+                                    <Button variant="primary" fullWidth>Register</Button>
+                                </Link>
+                            </>
+                        ) : null}
                     </li>
                 </ul>
             </nav>

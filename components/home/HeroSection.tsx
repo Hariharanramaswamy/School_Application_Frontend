@@ -6,8 +6,11 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import CountdownTimer from "@/components/ui/CountdownTimer";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function HeroSection() {
+    const { isLoggedIn } = useAuth();
+
     return (
         <section
             id="home"
@@ -79,9 +82,9 @@ export default function HeroSection() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6, delay: 0.5 }}
                     >
-                        <Link href="/register">
+                        <Link href={isLoggedIn ? "/admission" : "/register"}>
                             <Button size="lg" className="group">
-                                Register Now
+                                {isLoggedIn ? "Apply Now" : "Register Now"}
                                 <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                             </Button>
                         </Link>
